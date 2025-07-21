@@ -1,0 +1,3 @@
+[submodule "AK_base_linux_port/FreeRTOS"]
+	path = AK_base_linux_port/FreeRTOS
+	url = https://github.com/FreeRTOS/FreeRTOS-Kernel

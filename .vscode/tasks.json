@@ -41,8 +41,9 @@
             },
             "args": [
                 "-C", "mps4_board.subsystem.ethosu.num_macs=1024", 
-                "-C", "mps4_board.visualisation.disable-visualisation=1", 
-                //"-C", "vis_hdlcd.disable_visualisation=1",
+                //"-C", "mps4_board.visualisation.disable-visualisation=1", 
+                "-C", "vis_hdlcd.disable_visualisation=1",
+                "-C", "mps4_board.v_path=${workspaceFolder}/AK_base_linux_port/python_vio/",
                 "${command:arm-debugger.getApplicationFile}"
             ],
             "problemMatcher": []

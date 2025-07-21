@@ -5,6 +5,17 @@ project:
     - group: Source Files
       files:
         - file: ./main.c
+    - group: python_vio
+      files:
+        - file: ./python_vio/arm_vio.py
+        - file: ./python_vio/arm_vsi0.py
+        - file: ./python_vio/arm_vsi1.py
+        - file: ./python_vio/arm_vsi2.py
+        - file: ./python_vio/arm_vsi3.py
+        - file: ./python_vio/arm_vsi4.py
+        - file: ./python_vio/arm_vsi5.py
+        - file: ./python_vio/arm_vsi6.py
+        - file: ./python_vio/arm_vsi7.py
 
   # List components to use for your application.
   # A software component is a re-usable unit that may be configurable.
@@ -20,6 +31,12 @@ project:
     - component: Device:Native Driver:UART
     - component: ARM::Device:Definition
     - component: ARM::Device:Native Driver:IO
+    - component: ARM::CMSIS:OS Tick:SysTick
+    - component: ARM::RTOS&FreeRTOS:Config&FreeRTOS
+    - component: ARM::RTOS&FreeRTOS:Core&Cortex-M
+    - component: ARM::RTOS&FreeRTOS:Heap&Heap_4
+    - component: ARM::RTOS&FreeRTOS:Timers
+    - component: ARM::CMSIS Driver:VIO
 
   # List executable file formats to be generated.
   output:
@@ -31,3 +48,4 @@ project:
     - pack: ARM::CMSIS
     - pack: ARM::SSE_320_BSP
     - pack: ARM::CMSIS-Compiler
+    - pack: ARM::CMSIS-FreeRTOS

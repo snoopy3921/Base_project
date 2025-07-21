@@ -19,11 +19,21 @@
 #define RTE_USART0      1
 #define RTE_USART1      1
 
+/* ARM::CMSIS Driver:VIO@1.0.0 */
+#define RTE_VIO      1
 /* ARM::CMSIS-Compiler:STDOUT:Custom@1.1.0 */
 #define RTE_CMSIS_Compiler_STDOUT                /* CMSIS-Compiler STDOUT */
 #define RTE_CMSIS_Compiler_STDOUT_Custom         /* CMSIS-Compiler STDOUT: Custom */
 /* ARM::Device:Native Driver:IO@1.0.1 */
 #define RTE_MPS3_IO      1
+/* ARM::RTOS&FreeRTOS:Config&FreeRTOS@11.2.0 */
+#define RTE_RTOS_FreeRTOS_CONFIG        /* RTOS FreeRTOS Config for FreeRTOS API */
+/* ARM::RTOS&FreeRTOS:Core&Cortex-M@11.2.0 */
+#define RTE_RTOS_FreeRTOS_CORE          /* RTOS FreeRTOS Core */
+/* ARM::RTOS&FreeRTOS:Heap&Heap_4@11.2.0 */
+#define RTE_RTOS_FreeRTOS_HEAP_4        /* RTOS FreeRTOS Heap 4 */
+/* ARM::RTOS&FreeRTOS:Timers@11.2.0 */
+#define RTE_RTOS_FreeRTOS_TIMERS        /* RTOS FreeRTOS Timers */
 
 
 #endif /* RTE_COMPONENTS_H */

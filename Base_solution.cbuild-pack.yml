@@ -6,6 +6,9 @@ cbuild-pack:
     - resolved-pack: ARM::CMSIS-Compiler@2.1.0
       selected-by-pack:
         - ARM::CMSIS-Compiler
+    - resolved-pack: ARM::CMSIS-FreeRTOS@11.2.0
+      selected-by-pack:
+        - ARM::CMSIS-FreeRTOS
     - resolved-pack: ARM::SSE_320_BSP@1.1.0
       selected-by-pack:
         - ARM::SSE_320_BSP
