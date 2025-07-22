@@ -18,6 +18,10 @@ solution:
       ASM:
         - -gdwarf-5
 
+    - for-compiler: GCC
+      C-CPP:
+        - -fpermissive
+
   # List the packs that define the device and/or board.
   packs:
     - pack: ARM::SSE_320_BSP
@@ -51,4 +55,6 @@ solution:
   # List related projects.
   projects:
     - project: AK_base_linux_port/AK_base_linux_port.cproject.yml
+
+  # Current using compiler
   compiler: GCC

@@ -1,6 +1,13 @@
 # A project translates into one executable or library.
 project:
 
+  add-path:
+    - ./enc_h264/codec/api/svc/
+    - ./enc_h264/codec/common/inc/
+    - ./enc_h264/codec/processing/interface/
+    - ./enc_h264/codec/encoder/core/inc
+    - ./enc_h264/codec/encoder/plus/inc
+
   groups:
     - group: Source Files
       files:
@@ -16,6 +23,40 @@ project:
         - file: ./python_vio/arm_vsi5.py
         - file: ./python_vio/arm_vsi6.py
         - file: ./python_vio/arm_vsi7.py
+    - group: encoder h264
+      files:
+        - file: ./enc_h264/codec/encoder/core/src/au_set.cpp
+        - file: ./enc_h264/codec/encoder/core/src/deblocking.cpp
+        - file: ./enc_h264/codec/encoder/core/src/decode_mb_aux.cpp
+        - file: ./enc_h264/codec/encoder/core/src/encode_mb_aux.cpp
+        - file: ./enc_h264/codec/encoder/core/src/encoder.cpp
+        - file: ./enc_h264/codec/encoder/core/src/encoder_data_tables.cpp
+        - file: ./enc_h264/codec/encoder/core/src/encoder_ext.cpp
+        - file: ./enc_h264/codec/encoder/core/src/get_intra_predictor.cpp
+        - file: ./enc_h264/codec/encoder/core/src/md.cpp
+        - file: ./enc_h264/codec/encoder/core/src/mv_pred.cpp
+        - file: ./enc_h264/codec/encoder/core/src/nal_encap.cpp
+        - file: ./enc_h264/codec/encoder/core/src/paraset_strategy.cpp
+        - file: ./enc_h264/codec/encoder/core/src/picture_handle.cpp
+        - file: ./enc_h264/codec/encoder/core/src/ratectl.cpp
+        - file: ./enc_h264/codec/encoder/core/src/ref_list_mgr_svc.cpp
+        - file: ./enc_h264/codec/encoder/core/src/sample.cpp
+        - file: ./enc_h264/codec/encoder/core/src/set_mb_syn_cabac.cpp
+        - file: ./enc_h264/codec/encoder/core/src/set_mb_syn_cavlc.cpp
+        - file: ./enc_h264/codec/encoder/core/src/slice_multi_threading.cpp
+        - file: ./enc_h264/codec/encoder/core/src/svc_base_layer_md.cpp
+        - file: ./enc_h264/codec/encoder/core/src/svc_enc_slice_segment.cpp
+        - file: ./enc_h264/codec/encoder/core/src/svc_encode_mb.cpp
+        - file: ./enc_h264/codec/encoder/core/src/svc_encode_slice.cpp
+        - file: ./enc_h264/codec/encoder/core/src/svc_mode_decision.cpp
+        - file: ./enc_h264/codec/encoder/core/src/svc_motion_estimate.cpp
+        - file: ./enc_h264/codec/encoder/core/src/svc_set_mb_syn_cabac.cpp
+        - file: ./enc_h264/codec/encoder/core/src/svc_set_mb_syn_cavlc.cpp
+        - file: ./enc_h264/codec/encoder/core/src/wels_preprocess.cpp
+        - file: ./enc_h264/codec/encoder/core/src/wels_task_base.cpp
+        - file: ./enc_h264/codec/encoder/core/src/wels_task_encoder.cpp
+        - file: ./enc_h264/codec/encoder/core/src/wels_task_management.cpp
+        - file: ./enc_h264/codec/encoder/plus/src/welsEncoderExt.cpp
 
   # List components to use for your application.
   # A software component is a re-usable unit that may be configurable.
