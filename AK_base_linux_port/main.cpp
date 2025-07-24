@@ -1,6 +1,10 @@
+#include <stdint.h>
+#include <stdlib.h>
+#include <stdio.h>
+
+extern "C" {
 #include "RTE_Components.h"
 #include CMSIS_device_header
-#include <stdio.h>
 
 #include "device_cfg.h"
 #include "device_definition.h"
@@ -13,13 +17,11 @@
 #include "task.h"
 #include "semphr.h"
 
-
 #include "cmsis_vio.h"
-#include "stdio.h"
 #include "timeout.h"
-#include <stdint.h>
-#include <stdlib.h>
+}
 
+#include "enc_h264_wrapper.h"
 
 extern void vioSetValue(uint32_t id, int32_t value);
 extern int32_t vioGetValue(uint32_t id);
@@ -27,6 +29,11 @@ extern int32_t vioGetValue(uint32_t id);
 /*******************************************************************************
 * Macros
 *******************************************************************************/
+#if ENABLE_H264_ENCODER
+#define ENCODER_TASK_NAME           ("SwEncoder")
+#define ENCODER_TASK_STACK_SIZE     (configMINIMAL_STACK_SIZE)
+#define ENCODER_TASK_PRIORITY       (tskIDLE_PRIORITY + 1)
+#endif
 #define BLINKY_TASK_NAME            ("Blinky")
 #define BLINKY_TASK_STACK_SIZE      (configMINIMAL_STACK_SIZE)
 #define BLINKY_TASK_PRIORITY        (tskIDLE_PRIORITY + 1)
@@ -38,6 +45,27 @@ extern int32_t vioGetValue(uint32_t id);
 #define USER_LED_TOGGLE_PERIOD_MS   1000u
 
 
+#if ENABLE_H264_ENCODER
+static void encoder_h264_task(void *pvParameters)
+{
+    printf("[Enter Func] encoder_h264_task for testing!!!!\r\n");
+    (void) pvParameters;    
+    int count_frame = 0;
+
+    for(;;)
+    {
+        /* Block task for USER_LED_TOGGLE_PERIOD_MS. */
+        vTaskDelay(10);
+        
+        if(count_frame++ % 15 == 0) {
+            printf("[encoder_h264_task] have a trigger msg encoder yuv-frame[%d]\r\n",count_frame/15);
+            EncoderTaskInternal();
+        } else {
+            printf("[encoder_h264_task] is running but nothing doing\r\n");
+        }
+    }
+}
+#endif
 
 static void blinky_task(void *pvParameters)
 {
@@ -71,9 +99,7 @@ static void main_task(void *pvParameters)
     }
 }
 
-extern int stdout_init();
-
-
+extern "C" int stdout_init();
 
 int main() {
     //__enable_irq();
@@ -83,7 +109,10 @@ int main() {
     BaseType_t retval;
 
 
-        /* Create the RTOS tasks */
+    /* Create the RTOS tasks */
+#if ENABLE_H264_ENCODER
+    retval = xTaskCreate(encoder_h264_task, ENCODER_TASK_NAME, ENCODER_TASK_STACK_SIZE, NULL, ENCODER_TASK_PRIORITY, NULL );
+#endif
     retval = xTaskCreate(blinky_task, BLINKY_TASK_NAME, BLINKY_TASK_STACK_SIZE, NULL, BLINKY_TASK_PRIORITY, NULL );
     retval = xTaskCreate(main_task, MAIN_TASK_NAME, MAIN_TASK_STACK_SIZE, NULL, MAIN_TASK_PRIORITY, NULL );
     /* Start the scheduler */

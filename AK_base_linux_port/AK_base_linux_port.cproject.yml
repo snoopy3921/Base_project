@@ -11,7 +11,9 @@ project:
   groups:
     - group: Source Files
       files:
-        - file: ./main.c
+        - file: ./main.cpp
+        - file: enc_h264_wrapper.cpp
+        - file: enc_h264_wrapper.h
     - group: python_vio
       files:
         - file: ./python_vio/arm_vio.py
@@ -57,6 +59,8 @@ project:
         - file: ./enc_h264/codec/encoder/core/src/wels_task_encoder.cpp
         - file: ./enc_h264/codec/encoder/core/src/wels_task_management.cpp
         - file: ./enc_h264/codec/encoder/plus/src/welsEncoderExt.cpp
+        - file: ./enc_h264/codec/encoder/plus/src/customEncoder.cpp
+        - file: ./enc_h264/codec/common/src/memory_align.cpp
 
   # List components to use for your application.
   # A software component is a re-usable unit that may be configurable.

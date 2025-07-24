@@ -12,8 +12,7 @@ AR_OPTS = crD $@
 #CFLAGS += -march=$(ARCH)v8.1-m.main -mthumb -Os
 CFLAGS += -mcpu=cortex-m85 -mthumb -Os
 
-CFLAGS += -fpermissive
-CXXFLAGS += -fpermissive -Wno-invalid-pointer-conversion
+CXXFLAGS += -fpermissive
 
 ifeq ($(CXX), clang++)
 CXXFLAGS += -Wc++11-compat-reserved-user-defined-literal
