@@ -202,3 +202,8 @@ Build and run simple buttons and leds control:
 
 
 All ARM and CMSIS source codes are located in **/mnt/hdd/Vcpkg**.
+
+## Run VSI
+VSI is already include in main, to run it, first need to run the `video_writer.py` in `AK_base_linux_port/interface/video/python`
+
+![alt text](assets/VSI_img.png)
