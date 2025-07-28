@@ -1,8 +1,37 @@
 {
     "version": "2.0.0",
     "tasks": [
-        {
-            "label": "CMSIS Load+Run",
+		{
+			"label": "run python server",
+			"type": "shell",
+			"command": "python3",
+			"args": [
+                "AK_base_linux_port/interface/video/python/vsi_video_server.py", 
+				"--ip", 
+				"127.0.0.1", 
+				"--port", 
+				"6000", 
+				"--authkey", 
+				"vsi_video",
+				"2>&1",
+				"&"
+            ],
+			"isBackground": true,
+			"group": "build",
+			"problemMatcher": []
+		},
+		{
+			"label": "run python vsi4",
+			"type": "shell",
+			"command": "python3",
+			"args": [
+                "AK_base_linux_port/interface/video/python/arm_vsi4.py"
+            ],
+			"group": "build",
+			"problemMatcher": []
+		},
+		{
+            "label": "Load+Run",
             "type": "shell",
             "command": "/opt/vlsi/arm/tools/FVP_Corstone_SSE-320/models/Linux64_GCC-9.3/FVP_Corstone_SSE-320",
             "options": {
@@ -42,11 +71,24 @@
             "args": [
                 "-C", "mps4_board.subsystem.ethosu.num_macs=1024", 
                 //"-C", "mps4_board.visualisation.disable-visualisation=1", 
-                "-C", "vis_hdlcd.disable_visualisation=1",
-                "-C", "mps4_board.v_path=${workspaceFolder}/AK_base_linux_port/python_vio/",
+                //"-C", "vis_hdlcd.disable_visualisation=1",
+                "-C", "mps4_board.v_path=${workspaceFolder}/AK_base_linux_port/interface/video/python/",
                 "${command:arm-debugger.getApplicationFile}"
             ],
-            "problemMatcher": []
-        }
+            "problemMatcher": [],
+			"group": "build"
+        },
+		{
+			"label": "CMSIS Load+Run",
+			"dependsOn": [
+				"run python server",
+				"run python vsi4",
+				"Load+Run"
+			],
+			"dependsOrder": "sequence",   // <-- important!
+			"group": "build"
+		}
     ]
 }
+
+// python3 vsi_video_server.py --ip 127.0.0.1 --port 6000 --authkey vsi_video
