@@ -7,24 +7,17 @@ project:
     - ./enc_h264/codec/processing/interface/
     - ./enc_h264/codec/encoder/core/inc
     - ./enc_h264/codec/encoder/plus/inc
-
+    - ./interface/include/
+    - ./interface/video/include/
+    - ./interface/video/source/
   groups:
     - group: Source Files
       files:
         - file: ./main.cpp
         - file: enc_h264_wrapper.cpp
         - file: enc_h264_wrapper.h
-    - group: python_vio
-      files:
-        - file: ./python_vio/arm_vio.py
-        - file: ./python_vio/arm_vsi0.py
-        - file: ./python_vio/arm_vsi1.py
-        - file: ./python_vio/arm_vsi2.py
-        - file: ./python_vio/arm_vsi3.py
-        - file: ./python_vio/arm_vsi4.py
-        - file: ./python_vio/arm_vsi5.py
-        - file: ./python_vio/arm_vsi6.py
-        - file: ./python_vio/arm_vsi7.py
+        - file: hdlcd_helper.c
+        - file: hdlcd_helper.h
     - group: encoder h264
       files:
         - file: ./enc_h264/codec/encoder/core/src/au_set.cpp
@@ -61,9 +54,22 @@ project:
         - file: ./enc_h264/codec/encoder/plus/src/welsEncoderExt.cpp
         - file: ./enc_h264/codec/encoder/plus/src/customEncoder.cpp
         - file: ./enc_h264/codec/common/src/memory_align.cpp
+    - group: video streaming
+      files:
+        - file: ./interface/include/arm_vio.h
+        - file: ./interface/include/arm_vsi.h
+        - file: ./interface/include/arm_vsocket.h
+        - file: ./interface/video/source/video_drv.c
+        - file: ./interface/video/include/video_drv.h
+    - group: video streaming python
+      files:
+        - file: ./interface/video/python/vsi_video.py
+        - file: ./interface/video/python/arm_vsi4.py
+        - file: ./interface/video/python/video_writer.py
 
-  # List components to use for your application.
-  # A software component is a re-usable unit that may be configurable.
+
+    # List components to use for your application.
+    # A software component is a re-usable unit that may be configurable.
   components:
     - component: CMSIS:CORE
     #  - component: Device:Startup may not need because this is a virtual device
@@ -82,6 +88,7 @@ project:
     - component: ARM::RTOS&FreeRTOS:Heap&Heap_4
     - component: ARM::RTOS&FreeRTOS:Timers
     - component: ARM::CMSIS Driver:VIO
+    - component: ARM::Device:Native Driver:HDLCD
 
   # List executable file formats to be generated.
   output:

@@ -11,7 +11,12 @@
         "system_sse320.h": "c",
         "os_tick.h": "c",
         "freertos_os2.h": "c",
-        "device_cfg.h": "c"
+        "device_cfg.h": "c",
+        "hdlcd_reg_map.h": "c",
+        "video_drv.h": "c",
+        "arm_vsi.h": "c",
+        "streambuf": "cpp",
+        "stdint.h": "c"
     },
     "yaml.schemas": {
         "file:///home/fpt-remote2/.vscode/extensions/arm.cmsis-csolution-1.56.0-linux-x64/tools/cmsis-toolbox/etc/csolution.schema.json": "file:///mnt/hdd/huy_workspace/Base_solution/Base_solution.csolution.yml"

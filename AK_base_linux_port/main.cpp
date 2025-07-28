@@ -2,7 +2,9 @@
 #include <stdlib.h>
 #include <stdio.h>
 
+#ifdef __cplusplus
 extern "C" {
+#endif
 #include "RTE_Components.h"
 #include CMSIS_device_header
 
@@ -11,38 +13,39 @@ extern "C" {
 #include "arm_mps3_io_drv.h"
 
 #include "arm_mps3_io_reg_map.h"
+
 #include "os_tick.h"
 
 #include "FreeRTOS.h"
 #include "task.h"
 #include "semphr.h"
 
-#include "cmsis_vio.h"
-#include "timeout.h"
+
+#include "hdlcd_helper.h"
+
+#include "arm_vsi.h"
+#include "video_drv.h"
+#ifdef __cplusplus
 }
+#endif
 
-#include "enc_h264_wrapper.h"
+#define ENABLE_H264_ENCODER 1
 
-extern void vioSetValue(uint32_t id, int32_t value);
-extern int32_t vioGetValue(uint32_t id);
-
-/*******************************************************************************
-* Macros
-*******************************************************************************/
 #if ENABLE_H264_ENCODER
+#include "enc_h264_wrapper.h"
 #define ENCODER_TASK_NAME           ("SwEncoder")
 #define ENCODER_TASK_STACK_SIZE     (configMINIMAL_STACK_SIZE)
 #define ENCODER_TASK_PRIORITY       (tskIDLE_PRIORITY + 1)
 #endif
-#define BLINKY_TASK_NAME            ("Blinky")
-#define BLINKY_TASK_STACK_SIZE      (configMINIMAL_STACK_SIZE)
-#define BLINKY_TASK_PRIORITY        (tskIDLE_PRIORITY + 1)
-#define MAIN_TASK_NAME              ("Main")
-#define MAIN_TASK_STACK_SIZE        (configMINIMAL_STACK_SIZE)
-#define MAIN_TASK_PRIORITY          (tskIDLE_PRIORITY + 1)
+#define VIDEO_STREAMING_TASK_NAME       ("VideoStreaming")
+#define VIDEO_STREAMING_TASK_STACK_SIZE (configMINIMAL_STACK_SIZE * 2)
+#define VIDEO_STREAMING_TASK_PRIORITY   (tskIDLE_PRIORITY + 2)
 
-/* USER LED toggle period in milliseconds */
-#define USER_LED_TOGGLE_PERIOD_MS   1000u
+#define HDLCD_TASK_NAME             ("HDLCD")
+#define HDLCD_TASK_STACK_SIZE       (configMINIMAL_STACK_SIZE)
+#define HDLCD_TASK_PRIORITY         (tskIDLE_PRIORITY + 1)
+
+
 
 
 #if ENABLE_H264_ENCODER
@@ -55,11 +58,11 @@ static void encoder_h264_task(void *pvParameters)
     for(;;)
     {
         /* Block task for USER_LED_TOGGLE_PERIOD_MS. */
-        vTaskDelay(10);
+        vTaskDelay(5000);
         
         if(count_frame++ % 15 == 0) {
             printf("[encoder_h264_task] have a trigger msg encoder yuv-frame[%d]\r\n",count_frame/15);
-            EncoderTaskInternal();
+            //EncoderTaskInternal();
         } else {
             printf("[encoder_h264_task] is running but nothing doing\r\n");
         }
@@ -67,57 +70,75 @@ static void encoder_h264_task(void *pvParameters)
 }
 #endif
 
-static void blinky_task(void *pvParameters)
+
+#define IMAGE_WIDTH (192U)
+#define IMAGE_HEIGHT (192U)
+#define FRAME_RATE (30U)
+#define CHANNELS_IMAGE_DISPLAYED (3U)
+#define IMAGE_DATA_SIZE (IMAGE_WIDTH*IMAGE_HEIGHT*CHANNELS_IMAGE_DISPLAYED)
+
+static uint8_t ImageBuf[IMAGE_DATA_SIZE];   // Buffer for holding an input frame
+
+
+static void video_streaming_task(void *pvParameters)
 {
     (void) pvParameters;
-
-    /* Initialize the User LED */
-    struct arm_mps3_io_reg_map_t* p_mps3_io_port =
-                                (struct arm_mps3_io_reg_map_t*)MPS3_IO_DEV.cfg->base; // MPS3 IO base address
-
+    if (VideoDrv_Initialize(NULL) == VIDEO_DRV_OK) {
+        printf("[OK] Init video driver\n");
+    }
+    /* Configure video driver for input */
+    if (VideoDrv_Configure(VIDEO_DRV_IN0,  IMAGE_WIDTH, IMAGE_HEIGHT, VIDEO_DRV_COLOR_BGR565, FRAME_RATE) == VIDEO_DRV_OK) {
+        printf("[OK] Configure video input\n");
+    }
+    /* Set input video buffer */
+    if (VideoDrv_SetBuf(VIDEO_DRV_IN0,  ImageBuf, IMAGE_DATA_SIZE) == VIDEO_DRV_OK) {
+        printf("[OK] Set buffer for video input\n");
+    }
+    /* Start video capture */
+    if (VideoDrv_StreamStart(VIDEO_DRV_IN0, VIDEO_DRV_MODE_CONTINUOS) == VIDEO_DRV_OK) {
+        printf("[OK] Start frame capture\n");
+    }
     for(;;)
     {
-        vTaskDelay(USER_LED_TOGGLE_PERIOD_MS);
-        vioSetValue(0, rand());
-        /* Toggle the USER LED state */
-        p_mps3_io_port->fpgaio_leds ^= 1;
+        vTaskDelay(0xffffffff); 
     }
 }
 
-static void main_task(void *pvParameters)
+static void hdlcd_task(void *pvParameters)
 {
     (void) pvParameters;
-
+    hdlcd_helper_init();
     for(;;)
     {
-        /* Block task for USER_LED_TOGGLE_PERIOD_MS. */
-        vTaskDelay(10);
-        char buffer[32] = {0};
-        snprintf(buffer, sizeof(buffer), "Vio value is set to %d\r\n", vioGetValue(0));
-        printf("%s", buffer);
-
+        vTaskDelay(5);
+        hdlcd_show((uint32_t)ImageBuf, IMAGE_WIDTH, IMAGE_HEIGHT, HDLCD_PIXEL_FORMAT_RGB565);
     }
 }
+
 
 extern "C" int stdout_init();
-
-int main() {
+int main()
+{
     //__enable_irq();
     stdout_init();
-    printf("Bare metal hello!!!!\r\n");
 
     BaseType_t retval;
-
 
     /* Create the RTOS tasks */
 #if ENABLE_H264_ENCODER
     retval = xTaskCreate(encoder_h264_task, ENCODER_TASK_NAME, ENCODER_TASK_STACK_SIZE, NULL, ENCODER_TASK_PRIORITY, NULL );
 #endif
-    retval = xTaskCreate(blinky_task, BLINKY_TASK_NAME, BLINKY_TASK_STACK_SIZE, NULL, BLINKY_TASK_PRIORITY, NULL );
-    retval = xTaskCreate(main_task, MAIN_TASK_NAME, MAIN_TASK_STACK_SIZE, NULL, MAIN_TASK_PRIORITY, NULL );
+    retval = xTaskCreate(video_streaming_task, VIDEO_STREAMING_TASK_NAME, VIDEO_STREAMING_TASK_STACK_SIZE, NULL, VIDEO_STREAMING_TASK_PRIORITY, NULL );
+    retval = xTaskCreate(hdlcd_task, HDLCD_TASK_NAME, HDLCD_TASK_STACK_SIZE, NULL, HDLCD_TASK_PRIORITY, NULL );
+
     /* Start the scheduler */
     vTaskStartScheduler();
-    for (;;) {
 
+    while (1) {
+
+        for(int i = 0; i < 1000000; i++);
+        
+        //printf("Main function running...\n");
+        // Add your application logic here.
     }
 }

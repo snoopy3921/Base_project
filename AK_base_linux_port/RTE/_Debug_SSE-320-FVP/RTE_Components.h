@@ -24,6 +24,8 @@
 /* ARM::CMSIS-Compiler:STDOUT:Custom@1.1.0 */
 #define RTE_CMSIS_Compiler_STDOUT                /* CMSIS-Compiler STDOUT */
 #define RTE_CMSIS_Compiler_STDOUT_Custom         /* CMSIS-Compiler STDOUT: Custom */
+/* ARM::Device:Native Driver:HDLCD@1.0.0 */
+#define RTE_HDLCD    1
 /* ARM::Device:Native Driver:IO@1.0.1 */
 #define RTE_MPS3_IO      1
 /* ARM::RTOS&FreeRTOS:Config&FreeRTOS@11.2.0 */
